@@ -1,0 +1,40 @@
+Diagnostics:
+  UnusedIncludes: None
+
+CompileFlags:
+  Compiler: /Library/DaisyToolchain/0.2.0/arm/bin/arm-none-eabi-gcc
+  Add:
+    - -xc++
+    - -std=c++17
+    - -DSTM32H750xx
+    - -DSTM32H750IB
+    - -DUSE_HAL_DRIVER
+    - -DCORE_CM7
+    - -D__FPU_PRESENT=1
+    - -IlibDaisy/src
+    - -IlibDaisy/src/sys
+    - -IlibDaisy/src/usbd
+    - -IlibDaisy/src/usbh
+    - -IlibDaisy/Drivers/CMSIS_5/CMSIS/Core/Include
+    - -IlibDaisy/Drivers/CMSIS-Device/ST/STM32H7xx/Include
+    - -IlibDaisy/Drivers/STM32H7xx_HAL_Driver/Inc
+    - -IlibDaisy/Drivers/STM32H7xx_HAL_Driver/Inc/Legacy
+    - -IlibDaisy/Middlewares/ST/STM32_USB_Device_Library/Core/Inc
+    - -IlibDaisy/Middlewares/Patched/ST/STM32_USB_Device_Library/Class/CDC/Inc
+    - -IlibDaisy/Middlewares/ST/STM32_USB_Host_Library/Core/Inc
+    - -IlibDaisy/Middlewares/ST/STM32_USB_Host_Library/Class/MSC/Inc
+    - -IlibDaisy/Middlewares/ST/STM32_USB_Host_Library/Class/MIDI/Inc
+    - -IlibDaisy/Middlewares/Third_Party/FatFs/src
+    - -DUSE_DAISYSP_LGPL
+    - -IDaisySP/Source
+    - -IDaisySP/DaisySP-LGPL/Source
+    - -IDaisySP/Source/Control
+    - -IDaisySP/Source/Drums
+    - -IDaisySP/Source/Dynamics
+    - -IDaisySP/Source/Effects
+    - -IDaisySP/Source/Filters
+    - -IDaisySP/Source/Noise
+    - -IDaisySP/Source/PhysicalModeling
+    - -IDaisySP/Source/Sampling
+    - -IDaisySP/Source/Synthesis
+    - -IDaisySP/Source/Utility

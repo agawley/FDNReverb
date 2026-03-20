@@ -1,0 +1,17 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
+  "C_Cpp.intelliSenseEngine": "disabled",
+  "clangd.arguments": [
+    "--query-driver=/Library/DaisyToolchain/0.2.0/arm/bin/arm-none-eabi-*"
+  ],
+  "cmake.configureOnOpen": false,
+  "cSpell.words": [
+    "allpasses",
+    "daisysp",
+    "Freeverb",
+    "initialwet",
+    "roomsize",
+    "scalewet"
+  ]
+}

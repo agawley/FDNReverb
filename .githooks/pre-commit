@@ -1,0 +1,18 @@
+#!/bin/sh
+# Format staged C/C++ files with clang-format before committing
+
+STAGED=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(c|cpp|h|hpp)$')
+
+if [ -z "$STAGED" ]; then
+  exit 0
+fi
+
+if ! command -v clang-format >/dev/null 2>&1; then
+  echo "Error: clang-format not found. Install it or skip with --no-verify."
+  exit 1
+fi
+
+echo "$STAGED" | xargs clang-format -i
+echo "$STAGED" | xargs git add
+
+exit 0
