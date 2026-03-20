@@ -20,12 +20,17 @@ static DelayLine<float, 8192>  fdn_delay_1 DSY_SDRAM_BSS;
 static DelayLine<float, 8192>  fdn_delay_2 DSY_SDRAM_BSS;
 static DelayLine<float, 8192>  fdn_delay_3 DSY_SDRAM_BSS;
 static DelayLine<float, 8192>* fdn_delay[4];
+static DelayLine<float, 1024>  chorus_dl_l DSY_SDRAM_BSS;
+static DelayLine<float, 1024>  chorus_dl_r DSY_SDRAM_BSS;
 
 // --- Constants ---
 static const int   kFdnBaseDelay[4] = {1453, 1871, 2467, 3259};
 static const float kLfoBaseRate[4]  = {0.37f, 0.53f, 0.71f, 0.97f};
 static const float kLfoMaxExc[4]    = {12.f, 15.f, 10.f, 13.f};
 static const int   kPredelaySamp    = 960; // 20ms @ 48kHz
+static const float kChorusCenterSamp = 336.f; // ~7ms @ 48kHz
+static const float kChorusDepthSamp  = 144.f; // ~3ms excursion
+static const float kChorusMix        = 0.2f;  // subtle blend
 static const float kSmoothCoeff     = 0.002f;
 
 static const int kErTapDelay[18] = {
@@ -55,6 +60,18 @@ void FdnReverb::Init(float sample_rate) {
     fdn_delay[1] = &fdn_delay_1;
     fdn_delay[2] = &fdn_delay_2;
     fdn_delay[3] = &fdn_delay_3;
+
+    // Input chorus
+    chorus_dl_l.Init();
+    chorus_dl_r.Init();
+    chorus_lfo_l_.Init(sample_rate_);
+    chorus_lfo_l_.SetWaveform(Oscillator::WAVE_SIN);
+    chorus_lfo_l_.SetFreq(0.6f);
+    chorus_lfo_l_.SetAmp(1.0f);
+    chorus_lfo_r_.Init(sample_rate_);
+    chorus_lfo_r_.SetWaveform(Oscillator::WAVE_SIN);
+    chorus_lfo_r_.SetFreq(0.77f);
+    chorus_lfo_r_.SetAmp(1.0f);
 
     // Pre-delay
     predelay_l.Init();
@@ -140,13 +157,21 @@ void FdnReverb::Process(float in_l, float in_r,
     tone_l_.SetFrequency(tone_freq);
     tone_r_.SetFrequency(tone_freq);
 
-    // 2. Pre-delay
+    // 2. Input chorus
+    chorus_dl_l.Write(in_l);
+    chorus_dl_r.Write(in_r);
+    float cho_l = chorus_dl_l.ReadHermite(kChorusCenterSamp + chorus_lfo_l_.Process() * kChorusDepthSamp);
+    float cho_r = chorus_dl_r.ReadHermite(kChorusCenterSamp + chorus_lfo_r_.Process() * kChorusDepthSamp);
+    in_l = in_l * (1.f - kChorusMix) + cho_l * kChorusMix;
+    in_r = in_r * (1.f - kChorusMix) + cho_r * kChorusMix;
+
+    // 3. Pre-delay
     predelay_l.Write(in_l);
     predelay_r.Write(in_r);
     float pd_l = predelay_l.Read(kPredelaySamp);
     float pd_r = predelay_r.Read(kPredelaySamp);
 
-    // 3. Early reflections
+    // 4. Early reflections
     er_delay_l.Write(pd_l);
     er_delay_r.Write(pd_r);
 
@@ -160,7 +185,7 @@ void FdnReverb::Process(float in_l, float in_r,
         }
     }
 
-    // 4. FDN: read with LFO modulation, damp, Hadamard, feedback + ER inject
+    // 5. FDN: read with LFO modulation, damp, Hadamard, feedback + ER inject
     float s[4];
     for (int i = 0; i < kFdnSize; i++) {
         float base_delay = kFdnBaseDelay[i] * room_mult_;
@@ -186,11 +211,11 @@ void FdnReverb::Process(float in_l, float in_r,
     fdn_delay[2]->Write(s[2] + er_r * 0.5f);
     fdn_delay[3]->Write(s[3] + er_r * 0.5f);
 
-    // 5. Combine: wet = ER * er_level + FDN output
+    // 6. Combine: wet = ER * er_level + FDN output
     float out_l = er_l * p_er_level_ + fdn_l;
     float out_r = er_r * p_er_level_ + fdn_r;
 
-    // 6. Tone filter, DC block, soft clip
+    // 7. Tone filter, DC block, soft clip
     out_l = tone_l_.Process(out_l);
     out_r = tone_r_.Process(out_r);
     out_l = dc_l_.Process(out_l);

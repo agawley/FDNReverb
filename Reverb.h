@@ -40,6 +40,9 @@ private:
     daisysp::OnePole fdn_damp_[kFdnSize];
     daisysp::Oscillator lfo_[kFdnSize];
 
+    // Input chorus
+    daisysp::Oscillator chorus_lfo_l_, chorus_lfo_r_;
+
     // Output filtering
     daisysp::OnePole tone_l_, tone_r_;
     daisysp::DcBlock dc_l_, dc_r_;
