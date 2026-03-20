@@ -16,8 +16,7 @@ Template for building guitar pedal effects on the [Hothouse DIY DSP Platform](ht
    ```
 4. Build the submodule libraries (from the repo root):
    ```bash
-   (cd libDaisy && make)
-   (cd DaisySP && make)
+   make submodules
    ```
 5. Enable the pre-commit formatting hook:
    ```bash
@@ -32,6 +31,7 @@ Template for building guitar pedal effects on the [Hothouse DIY DSP Platform](ht
 make              # Build firmware
 make clean        # Clean build artifacts
 make program-dfu  # Flash via USB DFU
+make submodules   # Initialize and build libDaisy and DaisySP submodules
 ```
 
 To enter DFU mode, long-press footswitch 1 (2 seconds) or hold BOOT + press RESET on the Daisy Seed.
