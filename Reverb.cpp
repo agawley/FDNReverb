@@ -4,7 +4,11 @@
 // MIT License - see LICENSE file for details.
 
 #include "Reverb.h"
+#ifdef UNIT_TEST
+#define DSY_SDRAM_BSS
+#else
 #include "daisy_seed.h"
+#endif
 #include <cmath>
 
 using namespace daisysp;

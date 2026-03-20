@@ -22,6 +22,10 @@ public:
     // Process one stereo sample pair, returns wet only
     void Process(float in_l, float in_r, float* wet_l, float* wet_r);
 
+#ifdef UNIT_TEST
+    friend class HadamardTest;
+#endif
+
 private:
     static const int kFdnSize   = 4;
     static const int kErNumTaps = 18;

@@ -1,0 +1,12 @@
+CompileFlags:
+  Add:
+    - -std=gnu++17
+    - -DUNIT_TEST
+    - -I../DaisySP/Source
+    - -I../DaisySP/Source/Utility
+    - -I../DaisySP/Source/Synthesis
+    - -I../DaisySP/Source/Filters
+    - -I..
+    - -I.
+    - -I/opt/homebrew/include
+    - -xc++
