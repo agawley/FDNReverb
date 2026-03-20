@@ -2,7 +2,7 @@
 TARGET = effect
 
 # Sources
-CPP_SOURCES = main.cpp hothouse.cpp
+CPP_SOURCES = main.cpp hothouse.cpp Reverb.cpp
 
 # Library Locations
 LIBDAISY_DIR = libDaisy
